@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor de Diagramas - SugarImport</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        // Configurar Mermaid para que luzca profesional
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+        .diagram-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 30px;
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+        .diagram-card h2 {
+            margin-top: 0;
+            color: #2c3e50;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        p.desc {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        /* Esto centra los gráficos generados */
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Documentación Visual - SugarImport</h1>
+
+    <!-- DIAGRAMA ER -->
+    <div class="diagram-card">
+        <h2>📊 1. Diagrama Entidad-Relación (Base de Datos)</h2>
+        <p class="desc">Estructura de la base de datos local MySQL (phpMyAdmin). Muestra las tablas y cómo se relacionan entre sí a través de XAMPP.</p>
+        <div class="mermaid">
+        erDiagram
+            user ||--o{ u_r : "tiene rol"
+            rol ||--o{ u_r : "es asignado a"
+            user ||--o{ direccion : "tiene direcciones"
+            rol ||--o{ rm_pagin : "configura permisos"
+            modula ||--o{ rm_pagin : "agrupa"
+            paginas ||--o{ rm_pagin : "incluye"
+            rm_pagin ||--o{ rm_per : "otorga"
+            permisos ||--o{ rm_per : "asignado a"
+
+            user {
+                INTEGER id PK
+                TEXT username
+                TEXT password
+                TEXT email
+            }
+            rol {
+                INTEGER id PK
+                TEXT name
+            }
+            u_r {
+                INTEGER user_id PK,FK
+                INTEGER rol_id PK,FK
+            }
+            direccion {
+                INTEGER id PK
+                TEXT calle
+                TEXT av
+                TEXT sector
+                TEXT n_casa
+                TEXT status
+                INTEGER id_user FK
+            }
+            modula {
+                INTEGER id PK
+                TEXT name
+            }
+            paginas {
+                INTEGER id PK
+                TEXT path
+                TEXT name
+            }
+            rm_pagin {
+                INTEGER id PK
+                INTEGER rol_id FK
+                INTEGER modulo_id FK
+                INTEGER pagina_id FK
+            }
+            permisos {
+                INTEGER id PK
+                TEXT name
+            }
+            rm_per {
+                INTEGER rm_pagin_id PK,FK
+                INTEGER permiso_id PK,FK
+            }
+            products {
+                INTEGER id PK
+                TEXT name
+                TEXT brand
+                REAL price
+                INTEGER stock
+                TEXT image_url
+            }
+            site_settings {
+                INTEGER id PK
+                TEXT hero_title
+                TEXT hero_subtitle
+                TEXT about_text
+                TEXT whatsapp_number
+                TEXT primary_color
+                TEXT secondary_color
+                TEXT bg_color
+                TEXT text_color
+                TEXT card_bg
+                TEXT font_family
+            }
+        </div>
+    </div>
+
+    <!-- ARQUITECTURA -->
+    <div class="diagram-card">
+        <h2>🏗️ 2. Arquitectura del Sistema</h2>
+        <p class="desc">Muestra cómo el navegador del cliente se comunica con el servidor escrito en Node.js, y cómo este último lee y escribe en la base de datos.</p>
+        <div class="mermaid">
+        graph TD
+            subgraph Front-End [Navegador Web / Cliente]
+                Browser[HTML / CSS\nJavaScript Vanilla]
+            end
+
+            subgraph Back-End [Servidor Node.js + Express]
+                NodeApp[API REST]
+                MiddlewareAuth[Seguridad: JWT Token]
+            end
+
+            subgraph Capa de Datos
+                MySQL[(Base de Datos\nMySQL/XAMPP)]
+            end
+            
+            %% Relaciones
+            Browser -- Peticiones HTTP / API --> NodeApp
+            NodeApp -- Consultas SQL --> MySQL
+            MySQL -- Filas/Datos --> NodeApp
+            NodeApp -- Respuestas JSON --> Browser
+            
+            Browser -. Login .-> MiddlewareAuth
+            MiddlewareAuth -. Verifica Sesión .-> NodeApp
+        </div>
+    </div>
+
+    <!-- FLUJO -->
+    <div class="diagram-card">
+        <h2>🔄 3. Flujo de Navegación General</h2>
+        <p class="desc">Diagrama de flujo que explica las rutas públicas y protegidas de la aplicación.</p>
+        <div class="mermaid">
+        flowchart TD
+            Client([Visita Cliente])
+            Admin([Visita Administrador])
+
+            Home["🏠 Inicio /"]
+            Login["🔐 Login /login"]
+            Panel["⚙️ Dashboard Admin /admin"]
+
+            ApiAuth{POST /api/auth/login}
+
+            Client --> Home
+            Home --> ApiPub[Carga Configuración y Catálogo API]
+
+            Admin --> Login
+            Login -->|Envía Credenciales| ApiAuth
+            ApiAuth -->|Token Inválido| Login
+            ApiAuth -->|Éxito + JWT| Panel
+            
+            Panel --> ApiPriv[Control de Inventario y UI API]
+        </div>
+    </div>
+
+    <!-- CASO DE USO -->
+    <div class="diagram-card">
+        <h2>⚙️ 4. Diagrama de Secuencia: Guardar un Producto</h2>
+        <p class="desc">Muestra paso a paso la comunicación interna cuando el usuario administrador registra un producto nuevo en el sistema.</p>
+        <div class="mermaid">
+        sequenceDiagram
+            actor Admin as Administrador
+            participant UI as admin.html
+            participant API as Node.js (Servidor)
+            participant DB as MySQL
+
+            Admin->>UI: Llena datos y presiona "Guardar"
+            UI->>UI: Valida que los campos no estén vacíos
+            UI->>API: HTTP POST /api/products (Token JWT)
+            
+            API->>API: Middleware verifica Token
+            alt Token es Válido
+                API->>DB: INSERT INTO products (...)
+                DB-->>API: Devuelve ID creado
+                API-->>UI: 200 OK + Confirmación
+                UI-->>Admin: Notificación: "Producto Guardado"
+                UI->>UI: Actualiza visualmente la tabla HTML
+            else Token Inválido o Ausirate
+                API-->>UI: 401/403 Acceso Denegado
+                UI-->>Admin: Redirige a Login
+            end
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

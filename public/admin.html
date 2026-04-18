@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SugarImport | Módulo de Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <script src="js/theme.js"></script>
+</head>
+<body>
+
+    <div class="dashboard-wrapper">
+        <!-- SIDEBAR -->
+        <aside class="sidebar glass">
+            <div class="sidebar-header">
+                <a href="#" class="logo">Sugar<span>Admin</span></a>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-info-text">
+                    <div id="user-info-name" style="font-weight: bold; color: var(--text-color); font-size: 1.1rem; margin-bottom: 4px;">Cargando...</div>
+                    <div id="user-info-role" style="color: var(--primary-color); font-size: 0.85rem; background: rgba(14, 165, 233, 0.1); padding: 2px 8px; border-radius: 10px; display: inline-block;"></div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button id="tabInventory" class="sidebar-btn active">📦 Inventario (CRUD)</button>
+                <button id="tabUsers" class="sidebar-btn" style="display: none;">👥 Adm. Usuarios</button>
+                <button id="tabSettings" class="sidebar-btn" style="display: none;">🎨 Diseño Web</button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="/" target="_blank" class="sidebar-link">🌐 Ver Tienda Pública</a>
+                <a href="#" id="logoutBtn" class="sidebar-link danger-link">🚪 Cerrar Sesión</a>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="dashboard-main">
+
+        <!-- TAB CONTENT: INVENTORY -->
+        <div id="contentInventory" class="tab-content">
+            <div class="admin-header">
+                <h2>Gestión de Inventario (CRUD)</h2>
+                <button id="openAddModalBtn" class="btn">+ Nuevo Dispositivo</button>
+            </div>
+
+            <div class="glass" style="padding: 1rem; overflow-x: auto;">
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Imagen</th>
+                            <th>Nombre</th>
+                            <th>Marca</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Acciones (Permisos)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT: USERS -->
+        <div id="contentUsers" class="tab-content" style="display: none;">
+            <div class="admin-header">
+                <h2>Gestión de Usuarios y Accesos</h2>
+                <button id="openUserModalBtn" class="btn">+ Nuevo Usuario</button>
+            </div>
+
+            <div class="glass" style="padding: 1rem; overflow-x: auto;">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Filas dinámicas de usuarios -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT: CONFIGURATION -->
+        <div id="contentSettings" class="tab-content" style="display: none;">
+            <div class="admin-header">
+                <h2>Diseño y Textos de la Página</h2>
+            </div>
+            
+            <div class="glass" style="padding: 2rem;">
+                <form id="settingsForm">
+                    <div class="form-group">
+                        <label for="s-hero-title">Título Principal (Banner)</label>
+                        <input type="text" id="s-hero-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="s-hero-subtitle">Subtítulo (Banner)</label>
+                        <textarea id="s-hero-subtitle" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="s-about-text">Texto "Sobre Nosotros"</label>
+                        <textarea id="s-about-text" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group" style="display:flex; gap:1rem;">
+                        <div style="flex:1;">
+                            <label for="s-whatsapp">Número de WhatsApp (Ej: 584246665883)</label>
+                            <input type="text" id="s-whatsapp" required>
+                        </div>
+                        <div style="flex:1;">
+                            <label for="s-primary-color">Color Principal de la Página (HEX)</label>
+                            <input type="color" id="s-primary-color" style="height:45px; width:100%; border:none; background:none; cursor:pointer;" required>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="form-group" style="display:flex; gap:1rem;">
+                        <div style="flex:1;">
+                            <label for="s-secondary-color">Color Secundario / Acento</label>
+                            <input type="color" id="s-secondary-color" style="height:45px; width:100%; border:none; background:none; cursor:pointer;" required>
+                        </div>
+                        <div style="flex:1;">
+                            <label for="s-bg-color">Color de Fondo General</label>
+                            <input type="color" id="s-bg-color" style="height:45px; width:100%; border:none; background:none; cursor:pointer;" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="s-hero-image">URL de Imagen de Fondo (Portada / Hero)</label>
+                        <input type="url" id="s-hero-image" placeholder="https://ejemplo.com/imagen-futurista.jpg">
+                    </div>
+                    <div class="form-group" style="display:flex; gap:1rem;">
+                        <div style="flex:1;">
+                            <label for="s-contact-email">Email de Contacto</label>
+                            <input type="email" id="s-contact-email" placeholder="ventas@sugarimport.com">
+                        </div>
+                        <div style="flex:1;">
+                            <label for="s-footer-text">Texto del Pie de Página (Footer)</label>
+                            <input type="text" id="s-footer-text" placeholder="© 2026 SugarImport...">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display:flex; gap:1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; margin-top: 1rem;">
+                        <div style="flex:1;">
+                            <label for="s-text-color">Color de Texto General</label>
+                            <input type="color" id="s-text-color" style="height:45px; width:100%; border:none; background:none; cursor:pointer;" required>
+                        </div>
+                        <div style="flex:1;">
+                            <label for="s-card-bg">Color de Fondos (Tarjetas/Paneles)</label>
+                            <input type="color" id="s-card-bg" style="height:45px; width:100%; border:none; background:none; cursor:pointer;" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="s-font-family">Tipografía (Letra)</label>
+                        <select id="s-font-family" style="width: 100%; padding: 0.8rem; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);">
+                            <option value="'Inter', sans-serif">Inter (Moderna y Limpia)</option>
+                            <option value="'Poppins', sans-serif">Poppins (Geométrica y Amigable)</option>
+                            <option value="'Roboto', sans-serif">Roboto (Estándar Web)</option>
+                            <option value="'Montserrat', sans-serif">Montserrat (Elegante)</option>
+                            <option value="'Outfit', sans-serif">Outfit (Premium Display)</option>
+                            <option value="'Playfair Display', serif">Playfair Display (Clásica/Lujo)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width:100%; margin-top:1rem;">Guardar Cambios Visuales</button>
+                </form>
+        </div>
+        </main>
+    </div>
+
+    <!-- Modal Form (Añadir / Editar) -->
+    <div id="productModal" class="modal">
+        <div class="modal-content glass">
+            <h2 id="modalTitle" style="margin-bottom: 1.5rem;">Añadir Producto</h2>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="p-name">Nombre del Producto</label>
+                    <input type="text" id="p-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="p-brand">Marca</label>
+                    <input type="text" id="p-brand" required>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="p-price">Precio ($)</label>
+                        <input type="number" id="p-price" step="0.01" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="p-stock">Stock</label>
+                        <input type="number" id="p-stock" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="p-image">URL de la Imagen</label>
+                    <input type="text" id="p-image" placeholder="https://ejemplo.com/imagen.jpg">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" id="closeModalBtn" class="btn" style="flex: 1; border-color: #ef4444; color: #ef4444;">Cancelar</button>
+                    <button type="submit" class="btn" style="flex: 1; background: var(--primary-color); color: var(--bg-color);">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Form (Usuarios) -->
+    <div id="userModal" class="modal">
+        <div class="modal-content glass">
+            <h2 style="margin-bottom: 1.5rem;">Añadir Usuario</h2>
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="u-username">Usuario</label>
+                    <input type="text" id="u-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="u-email">Email</label>
+                    <input type="email" id="u-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="u-password">Contraseña</label>
+                    <input type="password" id="u-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="u-role">Rol</label>
+                        <select id="u-role" required style="width: 100%; padding: 0.8rem; border-radius: 8px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);">
+                        <option value="Admin" style="color: black;">Admin</option>
+                        <option value="Gestor" style="color: black;" selected>Gestor</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" id="closeUserModalBtn" class="btn" style="flex: 1; border-color: #ef4444; color: #ef4444;">Cancelar</button>
+                    <button type="submit" class="btn" style="flex: 1; background: var(--primary-color); color: var(--bg-color);">Crear Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth check goes first -->
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
